@@ -1,0 +1,47 @@
+// ==UserScript==
+// @name         유튜브 광고 완전 차단 + 자동 스킵
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  유튜브 광고 및 협찬 광고 자동 차단
+// @author       YourName
+// @match        *://www.youtube.com/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    console.log("🎉 유튜브 광고 차단 스크립트 실행 중!");
+
+    // 🔹 배너 광고 및 오버레이 광고 제거
+    function removeAds() {
+        let adElements = document.querySelectorAll("ytd-ad-slot-renderer, .ytp-ad-player-overlay, .ytp-ad-image, .ytp-ad-overlay-container");
+        adElements.forEach(el => el.remove());
+    }
+
+    // 🔹 동영상 광고 자동 스킵 (프리롤, 미드롤)
+    function skipVideoAds() {
+        let skipButton = document.querySelector(".ytp-ad-skip-button, .ytp-ad-skip-button-modern");
+        if (skipButton) {
+            skipButton.click(); // 광고 스킵 버튼 클릭
+            console.log("⏩ 유튜브 광고 스킵!");
+        }
+    }
+
+    // 🔹 협찬 광고 자동 건너뛰기 (5초씩 앞으로 이동)
+    function skipSponsorSegments() {
+        let progressBar = document.querySelector(".ytp-progress-bar");
+        if (progressBar && progressBar.getAttribute("aria-label")?.includes("광고")) {
+            document.querySelector("video").currentTime += 5; // 5초 앞으로 이동
+            console.log("⏩ 협찬 광고 건너뛰기!");
+        }
+    }
+
+    // 🔹 1초마다 광고 확인 후 제거 및 스킵
+    setInterval(() => {
+        removeAds();
+        skipVideoAds();
+        skipSponsorSegments();
+    }, 1000);
+
+})();
